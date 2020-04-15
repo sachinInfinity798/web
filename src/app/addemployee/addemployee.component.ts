@@ -15,7 +15,7 @@ import gql from 'graphql-tag';
 export class AddemployeeComponent implements OnInit {
   editid: any;
   title = 'Add Employee';
-  buttontitle = 'save';
+  buttontitle = 'Save';
   arryobj: any = [];
   citylist: any;
 
@@ -36,7 +36,7 @@ export class AddemployeeComponent implements OnInit {
   changeValueMth() {
     if (this.editid) {
       this.title = 'Edit Employee';
-      this.buttontitle = 'update';
+      this.buttontitle = 'Update';
     }
   }
   constructor(private apollo: Apollo, public _empservices: EmployeeService,
