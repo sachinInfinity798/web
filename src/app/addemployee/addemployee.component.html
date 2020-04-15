@@ -1,0 +1,78 @@
+<div class="container">
+    <h3 mat-dialog-title>{{title}}</h3>
+
+    <form class="mat-dialog-content" (ngSubmit)="submit()" #formControl="ngForm">
+
+        <div class="form">
+            <mat-form-field color="accent">
+                <input matInput #Name class="form-control" type="text" placeholder="Name" [(ngModel)]="data.Name"
+                    name="Name" maxlength="40" required pattern="^[a-zA-Z\s]+$">
+                <mat-error *ngIf="formControl.invalid && !data.Name">{{getErrorMessage()}}</mat-error>
+                <mat-error *ngIf="formControl.invalid && data.Name">Please enter letter only</mat-error>
+
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field color="accent">
+                <input matInput placeholder="Email" [(ngModel)]="data.Email" type="email" name="Email" required email>
+                <mat-error *ngIf="formControl.invalid && !data.Email">{{getErrorMessage()}}</mat-error>
+                <mat-error *ngIf="formControl.invalid && data.Email">Please enter valid Email</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field color="accent">
+                <textarea matInput #Address class="form-control" placeholder="Address" [(ngModel)]="data.Address"
+                    name="Address"></textarea>
+                <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+        </div>
+
+
+        <div class="form">
+            <mat-form-field>
+                <mat-label>Select DOB</mat-label>
+                <input required matInput [matDatepicker]="picker" placeholder="DOB" [(ngModel)]="data.DOB" name="DOB">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <div class="form" [ngClass]="{'mat-form-field-invalid':formControl.submitted && !data.Gender}">
+
+            <mat-radio-group aria-label="Gender" class="form-control" [ngModel]="data.Gender" #Gender="ngModel"
+                name="Gender" required>
+                <mat-radio-button value="Male">Male</mat-radio-button>
+                <mat-radio-button value="Female">Female</mat-radio-button>
+            </mat-radio-group>
+
+
+        </div>
+
+        <div class="form">
+            <mat-form-field>
+                <mat-label>Select City</mat-label>
+                <mat-select [(ngModel)]="data.City" name="City" required>
+                    <mat-option [value]="">Select City</mat-option>
+                    <mat-option *ngFor="let val of citylist" [value]="val.Name">
+                        {{val.Name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="form">
+            <mat-form-field color="accent">
+                <input required matInput placeholder="Mobile" type="number" [(ngModel)]="data.Mobile" name="Mobile"
+                    maxlength="10"
+                    onKeyDown="if(this.value.length==10 && event.keyCode>47 && event.keyCode < 58)return false;">
+            </mat-form-field>
+        </div>
+
+
+        <div mat-dialog-actions>
+            <button mat-button [type]="submit" [disabled]="!formControl.valid" [mat-dialog-close]="1"
+                (click)="employeeAddupdate(formControl)">{{buttontitle}}</button>
+            <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
+        </div>
+    </form>
+</div>

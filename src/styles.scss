@@ -1,1 +1,36 @@
 /* You can add global styles to this file, and also import other style files */
+// @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+/* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
+//  @import "~@angular/material/prebuilt-themes/pink-bluegrey.css"; 
+//  @import "~@angular/material/prebuilt-themes/purple-green.css"; 
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-drawer-container {
+    background-color: #fff;
+    //color: #303030;
+}
+
+.mat-icon-button.mat-primary, .mat-stroked-button.mat-primary {
+    color: #fff;
+}
+.mat-toolbar {
+    background: #b0bec6;
+    color: #fff;
+}
+
+.no-results {
+    color: #000;
+    text-align: center;
+    height: 50px;
+    margin-top: 10px;
+}
+
+
+mat-row, mat-footer-row {
+    min-height: 48px;
+    background: #68767d;
+}
+.mat-table {
+    background: #4e4f50;
+}

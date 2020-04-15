@@ -1,0 +1,86 @@
+<div class="container">
+    <!-- <h3 mat-dialog-title>Add Employee</h3> -->
+
+    <!-- <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm"> -->
+    <form [formGroup]="employeeForm" #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+        <div class="form">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="Name" formControlName="Name">
+                <mat-error
+                    *ngIf="employeeForm.controls.Name?.invalid && (employeeForm.controls.Name.dirty || employeeForm.controls.Name.touched)">
+                    <div *ngIf="employeeForm.controls.Name.invalid">
+                        Name only letter.
+                    </div>
+                    <div *ngIf="employeeForm.controls.Name.errors.required">
+                        Name is required.
+                    </div>
+                </mat-error>
+                <!-- <mat-error>
+                <span *ngIf="!bookForm.get('isbn').valid && bookForm.get('isbn').touched">Please enter ISBN</span>
+            </mat-error> -->
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="DOB" formControlName="DOB">
+                <!-- <mat-error>
+                <span *ngIf="!bookForm.get('title').valid && bookForm.get('title').touched">Please enter Title</span>
+            </mat-error> -->
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="Gender" formControlName="Gender">
+                <!-- <mat-error>
+                <span *ngIf="!bookForm.get('author').valid && bookForm.get('author').touched">Please enter Author</span>
+            </mat-error> -->
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field class="example-full-width">
+                <textarea matInput placeholder="Address" formControlName="Address"></textarea>
+                <!-- <mat-error>
+                <span *ngIf="!bookForm.get('description').valid && bookForm.get('description').touched">Please enter
+                    Description</span>
+            </mat-error> -->
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="City" formControlName="City">
+                <!-- <mat-error>
+                <span *ngIf="!bookForm.get('publisher').valid && bookForm.get('publisher').touched">Please enter
+                    Publisher</span>
+            </mat-error> -->
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="Mobile" type="text" formControlName="Mobile">
+                <!-- <mat-error>
+                <span *ngIf="!bookForm.get('publishedYear').valid && bookForm.get('publishedYear').touched">Please enter
+                    Published Year</span>
+            </mat-error> -->
+            </mat-form-field>
+        </div>
+        <div class="form">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="Email" type="text" formControlName="Email">
+                <mat-error
+                    *ngIf="employeeForm.controls.Email?.invalid && (employeeForm.controls.Email.dirty || employeeForm.controls.Email.touched)">
+                    <div *ngIf="employeeForm.controls.Email.errors.email">
+                        Email must be a valid email address.
+                    </div>
+                    <div *ngIf="employeeForm.controls.Email.errors.required">
+                        Email is required.
+                    </div>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div mat-dialog-actions>
+            <button mat-button [type]="submit" [disabled]="!employeeForm.valid" [mat-dialog-close]="1">Save</button>
+            <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
+        </div>
+    </form>
+</div>
