@@ -37,9 +37,6 @@ export class ListemployeeComponent implements OnInit {
   constructor(private changeDetectorRefs: ChangeDetectorRef, public _empservices: EmployeeService, private apollo: Apollo, public httpClient: HttpClient, public dialog: MatDialog, public datePipe: DatePipe) { }
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;//
-  @ViewChild('filter', { static: true }) filter: ElementRef;//
-
   @ViewChild(MatTable) table: MatTable<any>;
   ngOnInit(): void {
     this.listemployee();
