@@ -91,7 +91,7 @@ export class ListemployeeComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         this.isSuccess = true;
-        this.msgsuccss = "Added Succesfully";
+        this.msgsuccss = "Added Successfully";
         _this.clearmsg();
       }
     });
@@ -106,7 +106,7 @@ export class ListemployeeComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         _this.isSuccess = true;
-        _this.msgsuccss = "Updated Succesfully";
+        _this.msgsuccss = "Updated Successfully";
         _this.clearmsg();
       }
     });
@@ -122,7 +122,7 @@ export class ListemployeeComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         _this.isSuccess = true;
-        _this.msgsuccss = "Deleted Succesfully";
+        _this.msgsuccss = "Deleted Successfully";
         _this.clearmsg();
       }
     });

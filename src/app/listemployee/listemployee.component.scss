@@ -2,9 +2,13 @@ table {
   width: 100%;
 }
 .success.clsmsg {
-    text-align: center;
-    color: #fff;
-    background: #008000a1;
+       color: #000;
+    position: absolute;
+    margin: 0 auto;
+    left: 40%;
+    top: 11;
+    right: 50%;
+    width: 20%;
 }
 
 .error {
