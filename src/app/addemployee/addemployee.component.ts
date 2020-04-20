@@ -27,11 +27,7 @@ export class AddemployeeComponent implements OnInit {
   listCity() {
     this.apollo.query({
       query: gql`{ citylist {Name} }`
-    }).subscribe(res => {
-
-      this.citylist = res.data['citylist'];
-      console.log('city list', this.citylist);
-    })
+    }).subscribe(res => { this.citylist = res.data['citylist']; })
   }
   changeValueMth() {
     if (this.editid) {
@@ -69,10 +65,11 @@ export class AddemployeeComponent implements OnInit {
 
   onNoClick(): void {
     this.dialogRef.close();
+    this.data = {};
   }
 
   public employeeAddupdate(form): void {
-    if (this.editid) { this._empservices.updatedata(form.value, this.editid); } else { this._empservices.addData(form.value); }
+    if (this.editid) { this._empservices.updatedata(form.value, this.editid); this.data = {}; } else { this._empservices.addData(form.value); this.data = {}; }
 
 
   }

@@ -14,6 +14,7 @@ import { DatePipe } from '@angular/common';
 import { MatSort } from '@angular/material/sort';
 import { DataSource } from '@angular/cdk/collections';
 import { DeleteemployeeComponent } from '../deleteemployee/deleteemployee.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-listemployee',
@@ -24,7 +25,7 @@ export class ListemployeeComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'Address', 'DOB', 'Gender', 'City', 'Mobile', 'Email', 'actions'];
   dataSource: Employee[] = [];
   //dataSource = new MatTableDataSource([]);
-  resp: any = {};
+  resp: any = [];
   isLoadingResults = true;
   //sortedData;
   totalrow: number;
@@ -33,7 +34,11 @@ export class ListemployeeComponent implements OnInit {
   currentPage = 0;
   totalSize = 0;
   start = 0;
-  limit = 100;
+  limit = 10;
+  isError = false;
+  msg = '';
+  msgsuccss = '';
+  isSuccess = false;
   constructor(private changeDetectorRefs: ChangeDetectorRef, public _empservices: EmployeeService, private apollo: Apollo, public httpClient: HttpClient, public dialog: MatDialog, public datePipe: DatePipe) { }
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -41,19 +46,24 @@ export class ListemployeeComponent implements OnInit {
   ngOnInit(): void {
     this.listemployee();
   }
-
   listemployee() {
     this.apollo.query({
       query: gql`{ listemployees(first:${this.start},limit:${this.limit}) {_id,Name,Address,DOB,Gender,City,Mobile,Email} }`
     }).subscribe(res => {
+      this.isError = false;
+      this.msg = "";
       console.log('res', res);
       this.dataSource = res.data['listemployees'];
-      this.totalrow = this.dataSource.length
+
       this._empservices.setdata(res.data['listemployees']);
       this.refreceTable();
 
       this.isLoadingResults = false;
-    })
+    },
+      (error: HttpErrorResponse) => {
+        this.isError = true;
+        this.msg = "Internal Server error Please start server !";
+      })
   }
   refreceTable() {
     this._empservices.emplist.subscribe(resut => {
@@ -71,40 +81,57 @@ export class ListemployeeComponent implements OnInit {
     this.listemployee()
   }
   add() {
-
+    let _this = this;
+    _this.isSuccess = false;
+    _this.msgsuccss = "";
     console.log('check list');
     let dialogRef = this.dialog.open(AddemployeeComponent, {
       data: {}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
+        this.isSuccess = true;
+        this.msgsuccss = "Added Succesfully";
+        _this.clearmsg();
       }
     });
   }
   Edit(row) {
+    let _this = this;
+    _this.isSuccess = false;
+    _this.msgsuccss = "";
     const dialogRef = this.dialog.open(AddemployeeComponent, {
       data: { id: row._id, Name: row.Name, Address: row.Address, DOB: row.DOB, Gender: row.Gender, City: row.City, Mobile: row.Mobile, Email: row.Email }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
-
+        _this.isSuccess = true;
+        _this.msgsuccss = "Updated Succesfully";
+        _this.clearmsg();
       }
     });
   }
 
   delete(row, index) {
-
+    let _this = this;
+    _this.isSuccess = false;
+    _this.msgsuccss = "";
     const dialogRef = this.dialog.open(DeleteemployeeComponent, {
       data: { id: row._id, index: index }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
-
+        _this.isSuccess = true;
+        _this.msgsuccss = "Deleted Succesfully";
+        _this.clearmsg();
       }
     });
   }
 
-
+  clearmsg() {
+    let _this = this;
+    setTimeout(function () { _this.isSuccess = false; _this.msgsuccss = ""; }, 2000);
+  }
 
 }
 

@@ -74,8 +74,6 @@ export class EmployeeService {
     }
     addData(data: Employee): void {
         let addeddata = data;
-        let allArry: any = []
-        //this.datePipe.transform(data.DOB, 'yyyy-MM-ddT00:00:00.000Z')
         console.log('date time', this.datePipe.transform(data.DOB, 'yyyy-MM-ddT00:00:00.000Z'));
         this.apollo.mutate({
             mutation: saveemployee,
@@ -90,13 +88,14 @@ export class EmployeeService {
             }
         }).subscribe(({ data }) => {
             let recobj = data;
+            let allArry: any = []
             this.emplist.subscribe(resut => { allArry = resut });
             addeddata['_id'] = recobj['addEmployee']._id;
             allArry.unshift(addeddata);
             this.setdata(allArry);
 
         }, (error) => {
-            console.log('there was an error sending the query', error);
+            console.log('there was an error sending by server', error);
         });
     }
     updatedata(data: Employee, Id) {
@@ -122,26 +121,24 @@ export class EmployeeService {
             allArry[index] = updateddata;
             this.setdata(allArry);
         }, (error) => {
-            console.log('there was an error sending the query', error);
+            console.log('there was an error sending by server', error);
         });
 
     }
     deletedata(id, index) {
         let allArry: any = []
         const Id = id;
-        console.log('Id', Id);
         this.apollo.mutate({
             mutation: deleteemp,
             variables: {
                 id: Id
             }
         }).subscribe(({ data }) => {
-            console.log('got data', data);
             this.emplist.subscribe(resut => { allArry = resut });
             if (index > -1) { allArry.splice(index, 1); }
             this.setdata(allArry);
         }, (error) => {
-            console.log('there was an error sending the query', error);
+            console.log('there was an error sending by server', error);
         });
     }
 

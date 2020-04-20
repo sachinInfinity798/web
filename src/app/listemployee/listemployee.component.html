@@ -1,74 +1,78 @@
 <div class="container">
-    <div align="end">
-        <button mat-raised-button color="primary" (click)="add()">
-            <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>Add
-        </button>
-    </div>
-    <mat-table #table [dataSource]="dataSource" matSort class="mat-cell">
+    <div class="error" *ngIf="isError">{{msg}}</div>
+    <div *ngIf="!isError">
+        <div class="success clsmsg" *ngIf="isSuccess">{{msgsuccss}}</div>
+        <div align="end">
+            <button mat-raised-button color="primary" (click)="add()">
+                <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>Add
+            </button>
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort class="mat-cell">
 
-        <!-- ID Column -->
-        <ng-container matColumnDef="Name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{row.Name}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="Email">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.Email}}</mat-cell>
-        </ng-container>
+            <!-- ID Column -->
+            <ng-container matColumnDef="Name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.Name}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Email">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.Email}}</mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="Address">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Address</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.Address}}</mat-cell>
-        </ng-container>
+            <ng-container matColumnDef="Address">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Address</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.Address}}</mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="DOB">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>DOB</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.DOB | date:'dd-MM-yyyy'}}</mat-cell>
-        </ng-container>
+            <ng-container matColumnDef="DOB">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>DOB</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.DOB | date:'dd-MM-yyyy'}}</mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="Gender">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Gender</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.Gender}}</mat-cell>
-        </ng-container>
+            <ng-container matColumnDef="Gender">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Gender</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.Gender}}</mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="City">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>City</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.City}}</mat-cell>
-        </ng-container>
+            <ng-container matColumnDef="City">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>City</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.City}}</mat-cell>
+            </ng-container>
 
-        <ng-container matColumnDef="Mobile">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.Mobile}}</mat-cell>
-        </ng-container>
+            <ng-container matColumnDef="Mobile">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.Mobile}}</mat-cell>
+            </ng-container>
 
-        <!-- actions -->
-        <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>
-                <button mat-icon-button color="primary">Action</button>
-            </mat-header-cell>
+            <!-- actions -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>
+                    <button mat-icon-button color="primary">Action</button>
+                </mat-header-cell>
 
-            <mat-cell *matCellDef="let row; let i=index;">
-                <button mat-raised-button color="primary" (click)="Edit(row)">
-                    <mat-icon aria-label="Edit">edit</mat-icon>
-                </button>
+                <mat-cell *matCellDef="let row; let i=index;">
+                    <button mat-raised-button color="primary" (click)="Edit(row)">
+                        <mat-icon aria-label="Edit">edit</mat-icon>
+                    </button>
 
-                <button mat-raised-button color="warn" (click)="delete(row,i)">
-                    <mat-icon aria-label="Delete">delete</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+                    <button mat-raised-button color="warn" (click)="delete(row,i)">
+                        <mat-icon aria-label="Delete">delete</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-
-
-    <div class="no-results" *ngIf="dataSource.length==0">
-        No results found Please Add new data
-    </div>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
 
 
-    <!-- <mat-paginator [length]="totalrow" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"
+        <div class="no-results" *ngIf="dataSource.length==0">
+            No results found Please Add new data
+        </div>
+
+
+        <!-- <mat-paginator [length]="totalrow" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"
         [showFirstLastButtons]="true" (page)="pageEvent = handlePage($event)" [pageIndex]="currentPage">
     </mat-paginator> -->
+    </div>
 </div>
