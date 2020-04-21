@@ -64,8 +64,6 @@ export class EmployeeService {
     cast = this.employees.asObservable();
 
     constructor(private apollo: Apollo, private httpClient: HttpClient, private datePipe: DatePipe) { }
-
-
     setdata(data) {
         this.employees.next(data);
     }
