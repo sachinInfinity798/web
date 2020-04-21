@@ -39,7 +39,7 @@
 
         <div class="form" [ngClass]="{'mat-form-field-invalid':formControl.submitted && !data.Gender}">
 
-            <mat-radio-group aria-label="Gender" class="form-control" [ngModel]="data.Gender" #Gender="ngModel"
+            <mat-radio-group aria-label="Gender" class="form-control" [(ngModel)]="data.Gender" #Gender="ngModel"
                 name="Gender" required>
                 <mat-radio-button value="Male">Male</mat-radio-button>
                 <mat-radio-button value="Female">Female</mat-radio-button>
@@ -71,7 +71,7 @@
 
         <div mat-dialog-actions>
             <button mat-button [type]="submit" [disabled]="!formControl.valid" [mat-dialog-close]="1"
-                (click)="employeeAddupdate(formControl)">{{buttontitle}}</button>
+                (click)="employeeAddupdate()">{{buttontitle}}</button>
             <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
         </div>
     </form>

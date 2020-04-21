@@ -68,8 +68,9 @@ export class AddemployeeComponent implements OnInit {
     this.data = {};
   }
 
-  public employeeAddupdate(form): void {
-    if (this.editid) { this._empservices.updatedata(form.value, this.editid); this.data = {}; } else { this._empservices.addData(form.value); this.data = {}; }
+  public employeeAddupdate(): void {
+    console.log('this.data', this.data);
+    if (this.editid) { this._empservices.updatedata(this.data, this.editid); this.data = {}; } else { this._empservices.addData(this.data); this.data = {}; }
 
 
   }
