@@ -72,7 +72,7 @@ export class EmployeeService {
     }
     addData(data: Employee): void {
         let addeddata = data;
-        console.log('date time', this.datePipe.transform(data.DOB, 'yyyy-MM-ddT00:00:00.000Z'));
+        //console.log('date time', this.datePipe.transform(data.DOB, 'yyyy-MM-ddT00:00:00.000Z'));
         this.apollo.mutate({
             mutation: saveemployee,
             variables: {
@@ -112,7 +112,7 @@ export class EmployeeService {
                 Email: data.Email
             }
         }).subscribe(({ data }) => {
-            console.log('got Updayted data', data['updateEmployee']._id);
+            //console.log('got Updayted data', data['updateEmployee']._id);
             this.emplist.subscribe(resut => { allArry = resut });
             let index = allArry.findIndex(a => a._id == Id);
             updateddata['_id'] = data['updateEmployee']._id;
@@ -123,7 +123,7 @@ export class EmployeeService {
         });
 
     }
-    deletedata(id, index) {
+    deletedata(id) {
         let allArry: any = []
         const Id = id;
         this.apollo.mutate({
@@ -133,6 +133,7 @@ export class EmployeeService {
             }
         }).subscribe(({ data }) => {
             this.emplist.subscribe(resut => { allArry = resut });
+            let index = allArry.findIndex(a => a._id == Id);
             if (index > -1) { allArry.splice(index, 1); }
             this.setdata(allArry);
         }, (error) => {

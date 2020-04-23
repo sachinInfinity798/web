@@ -1,8 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, TemplateRef, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Employee } from './employee';
-import { AddemployeeComponent } from '../addemployee/addemployee.component';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
@@ -13,13 +12,26 @@ import { map } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MatSort } from '@angular/material/sort';
 import { DataSource } from '@angular/cdk/collections';
-import { DeleteemployeeComponent } from '../deleteemployee/deleteemployee.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+import { FormBuilder, FormGroup, NgForm, FormControl, Validators } from '@angular/forms';
+
+import { NativeDateAdapter, DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
+import { AppDateAdapter, APP_DATE_FORMATS } from './date.adapter';
 
 @Component({
   selector: 'app-listemployee',
   templateUrl: './listemployee.component.html',
-  styleUrls: ['./listemployee.component.scss']
+  styleUrls: ['./listemployee.component.scss'],
+  providers: [
+    {
+      provide: DateAdapter, useClass: AppDateAdapter
+    },
+    {
+      provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS
+    }
+  ]
 })
 export class ListemployeeComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'Address', 'DOB', 'Gender', 'City', 'Mobile', 'Email', 'actions'];
@@ -39,12 +51,27 @@ export class ListemployeeComponent implements OnInit {
   msg = '';
   msgsuccss = '';
   isSuccess = false;
+
+
+  editid: any;
+  title = 'Add Employee';
+  buttontitle = 'Save';
+  arryobj: any = [];
+  citylist: any;
+  data: Employee = { id: '', Name: '', Address: '', DOB: new Date(), Gender: '', City: '', Mobile: undefined, Email: '' };
+
   constructor(private changeDetectorRefs: ChangeDetectorRef, public _empservices: EmployeeService, private apollo: Apollo, public httpClient: HttpClient, public dialog: MatDialog, public datePipe: DatePipe) { }
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild('addEmployeeDialog') addEmployeeDialog: TemplateRef<any>;
+  @ViewChild('deleteDialog') deleteEmployeeDialog: TemplateRef<any>;
+
+  private addeditEmpDialogRef: MatDialogRef<TemplateRef<any>>;//
   ngOnInit(): void {
     this.listemployee();
+    this.listCity();
+    this.resetData();
   }
   listemployee() {
     this.apollo.query({
@@ -52,7 +79,6 @@ export class ListemployeeComponent implements OnInit {
     }).subscribe(res => {
       this.isError = false;
       this.msg = "";
-      console.log('res', res);
       this.dataSource = res.data['listemployees'];
 
       this._empservices.setdata(res.data['listemployees']);
@@ -82,13 +108,12 @@ export class ListemployeeComponent implements OnInit {
   }
   add() {
     let _this = this;
+    _this.resetData();
+    _this.changeValueMth();
     _this.isSuccess = false;
     _this.msgsuccss = "";
-    console.log('check list');
-    let dialogRef = this.dialog.open(AddemployeeComponent, {
-      data: {}
-    });
-    dialogRef.afterClosed().subscribe(result => {
+    this.addeditEmpDialogRef = this.dialog.open(this.addEmployeeDialog);
+    this.addeditEmpDialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         this.isSuccess = true;
         this.msgsuccss = "Added Successfully";
@@ -98,12 +123,14 @@ export class ListemployeeComponent implements OnInit {
   }
   Edit(row) {
     let _this = this;
+    _this.editid = row._id;
+    _this.changeValueMth();
     _this.isSuccess = false;
     _this.msgsuccss = "";
-    const dialogRef = this.dialog.open(AddemployeeComponent, {
-      data: { id: row._id, Name: row.Name, Address: row.Address, DOB: row.DOB, Gender: row.Gender, City: row.City, Mobile: row.Mobile, Email: row.Email }
-    });
-    dialogRef.afterClosed().subscribe(result => {
+    _this.data = row;
+
+    this.addeditEmpDialogRef = this.dialog.open(this.addEmployeeDialog);
+    this.addeditEmpDialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         _this.isSuccess = true;
         _this.msgsuccss = "Updated Successfully";
@@ -111,15 +138,13 @@ export class ListemployeeComponent implements OnInit {
       }
     });
   }
-
   delete(row, index) {
     let _this = this;
+    _this.editid = row._id;
     _this.isSuccess = false;
     _this.msgsuccss = "";
-    const dialogRef = this.dialog.open(DeleteemployeeComponent, {
-      data: { id: row._id, index: index }
-    });
-    dialogRef.afterClosed().subscribe(result => {
+    this.addeditEmpDialogRef = this.dialog.open(this.deleteEmployeeDialog);
+    this.addeditEmpDialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         _this.isSuccess = true;
         _this.msgsuccss = "Deleted Successfully";
@@ -131,6 +156,50 @@ export class ListemployeeComponent implements OnInit {
   clearmsg() {
     let _this = this;
     setTimeout(function () { _this.isSuccess = false; _this.msgsuccss = ""; }, 2000);
+  }
+
+  //
+  onNoClick(): void {
+    this.addeditEmpDialogRef.close();
+    this.resetData();
+  }
+  employeeAddupdate() {
+    if (this.editid) { this._empservices.updatedata(this.data, this.editid); } else { this._empservices.addData(this.data); }
+    this.resetData();
+  }
+  formControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+  ]);
+
+  listCity() {
+    this.apollo.query({
+      query: gql`{ citylist {Name} }`
+    }).subscribe(res => { this.citylist = res.data['citylist']; })
+  }
+  changeValueMth() {
+    if (this.editid) {
+      this.title = 'Edit Employee';
+      this.buttontitle = 'Update';
+    }
+    else {
+      this.title = 'Add Employee';
+      this.buttontitle = 'Save';
+    }
+  }
+  resetData() {
+    this.editid = undefined;
+    this.data = { id: '', Name: '', Address: '', DOB: new Date(), Gender: '', City: '', Mobile: undefined, Email: '' };
+  }
+  submit() {
+    // emppty stuff
+  }
+  getErrorMessage() {
+    return this.formControl.hasError('required') ? 'Required field' : this.formControl.hasError('email') ? 'Not a valid email' : '';
+  }
+  confirmDelete(): void {
+    this._empservices.deletedata(this.editid);
+    this.editid = undefined;
   }
 
 }

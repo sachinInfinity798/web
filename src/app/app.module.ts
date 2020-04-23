@@ -10,7 +10,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ListemployeeComponent } from './listemployee/listemployee.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
-import { AddemployeeComponent } from './addemployee/addemployee.component';
+//import { AddemployeeComponent } from './addemployee/addemployee.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +22,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { EmployeeService } from './services/employee.service';
 import { DatePipe } from '@angular/common';
-import { DeleteemployeeComponent } from './deleteemployee/deleteemployee.component';
+//import { DeleteemployeeComponent } from './deleteemployee/deleteemployee.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 
@@ -30,8 +30,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
   declarations: [
     AppComponent,
     ListemployeeComponent,
-    AddemployeeComponent,
-    DeleteemployeeComponent
 
   ],
   imports: [
@@ -54,9 +52,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatNativeDateModule,
     MatPaginatorModule
   ],
-  entryComponents: [
-    AddemployeeComponent
-  ],
+  // entryComponents: [
+  //   AddemployeeComponent
+  // ],
   providers: [EmployeeService, DatePipe],
   bootstrap: [AppComponent],
 
