@@ -20,9 +20,9 @@ import { FormBuilder, FormGroup, NgForm, FormControl, Validators } from '@angula
 import { NativeDateAdapter, DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
 import { AppDateAdapter, APP_DATE_FORMATS } from './date.adapter';
 const empQuery = gql`
-  query employee($Id: String) {
-    book(id: $Id) {
-      id,
+  mutation employee($id: String!) {
+    employee(id:$id) {
+      _id,
       Name,
       Address,
       DOB,
@@ -107,6 +107,7 @@ export class ListemployeeComponent implements OnInit {
         this.msg = "Internal Server error Please start server !";
       })
   }
+
   refreceTable() {
     this._empservices.emplist.subscribe(resut => {
       this.dataSource = resut;
@@ -147,6 +148,7 @@ export class ListemployeeComponent implements OnInit {
 
     this.addeditEmpDialogRef = this.dialog.open(this.addEmployeeDialog, { disableClose: true });
     this.addeditEmpDialogRef.afterClosed().subscribe(result => {
+
       if (result === 1) {
         _this.isSuccess = true;
         _this.msgsuccss = "Updated Successfully";
@@ -178,10 +180,9 @@ export class ListemployeeComponent implements OnInit {
   onNoClick(): void {
     let obj: any = {};
     let _this = this;
-    _this.listemployee();
-    _this.addeditEmpDialogRef.close();
-    _this.oldDataSet();
 
+    _this.oldDataSet();
+    _this.addeditEmpDialogRef.close();
 
   }
   employeeAddupdate() {
@@ -225,22 +226,28 @@ export class ListemployeeComponent implements OnInit {
   }
   oldDataSet() {
     let _this = this;
-    this.query = this.apollo.watchQuery({
-      query: gql`{ employee(id: "${_this.editid}") {_id,Name,Address,DOB,Gender,City,Mobile,Email} }`
-    });
-
-    this.query.valueChanges.subscribe(res => {
-      _this.data.Name = res.data['employee'].Name;
-      _this.data.Address = res.data['employee'].Address;
-      _this.data.DOB = res.data['employee'].DOB;
-      _this.data.Gender = res.data['employee'].Gender;
-      _this.data.City = res.data['employee'].City;
-      _this.data.Mobile = res.data['employee'].Mobile;
-      _this.data.Email = res.data['employee'].Email;
+    _this.apollo.mutate({
+      mutation: empQuery,
+      variables: {
+        id: _this.editid
+      }
+    }).subscribe(({ data }) => {
+      console.log('real time data', data['employee']);
+      _this.data.Name = data['employee']['Name'];
+      _this.data.Address = data['employee']['Address'];
+      _this.data.DOB = data['employee']['DOB'];
+      _this.data.Gender = data['employee']['Gender'];
+      _this.data.City = data['employee']['City'];
+      _this.data.Mobile = data['employee']['Mobile'];
+      _this.data.Email = data['employee']['Email'];
       this.table.renderRows();
+
       _this.resetData();
+    }, (error) => {
+      console.log('there was an error sending by server', error);
     });
   }
+
 
 }
 

@@ -130,12 +130,16 @@ export class EmployeeService {
                 Email: data.Email
             }
         }).subscribe(({ data }) => {
-            //console.log('got Updayted data', data['updateEmployee']._id);
+            console.log('got Updayted data7777', updateddata);
             this.emplist.subscribe(resut => { allArry = resut });
             let index = allArry.findIndex(a => a._id == Id);
             updateddata['_id'] = data['updateEmployee']._id;
             allArry[index] = updateddata;
             this.setdata(allArry);
+
+            //updateddata['_id'] = data['updateEmployee']._id;
+            //allArry[index] = updateddata;
+            //this.setdata(allArry);
         }, (error) => {
             console.log('there was an error sending by server', error);
         });
