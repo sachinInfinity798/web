@@ -29,7 +29,7 @@ const saveemployee = gql`
   }
 `;
 const updateEmployee = gql`
-  mutation updateBook(
+  mutation updateEmployee(
     $id: String!,
     $Name: String!,
     $Address: String,
@@ -58,18 +58,36 @@ const deleteemp = gql`
     }
   }
 `;
+const empQuery = gql`
+  query employee($Id: String) {
+    book(id: $Id) {
+      id,
+      Name,
+      Address,
+      DOB,
+      Gender,
+      City,
+      Mobile,
+      Email
+    }
+  }
+`;
 @Injectable()
 export class EmployeeService {
     private employees = new BehaviorSubject<any>({});
     cast = this.employees.asObservable();
 
+
     constructor(private apollo: Apollo, private httpClient: HttpClient, private datePipe: DatePipe) { }
+
+
     setdata(data) {
         this.employees.next(data);
     }
     get emplist() {
         return this.employees.asObservable();
     }
+
     addData(data: Employee): void {
         let addeddata = data;
         //console.log('date time', this.datePipe.transform(data.DOB, 'yyyy-MM-ddT00:00:00.000Z'));

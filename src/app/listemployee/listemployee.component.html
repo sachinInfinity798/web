@@ -51,7 +51,7 @@
                 </mat-header-cell>
 
                 <mat-cell *matCellDef="let row; let i=index;">
-                    <button mat-raised-button color="primary" (click)="Edit(row)">
+                    <button mat-raised-button color="primary" (click)="Edit(row,i)">
                         <mat-icon aria-label="Edit">edit</mat-icon>
                     </button>
 

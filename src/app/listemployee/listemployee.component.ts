@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { Apollo } from 'apollo-angular';
+import { Apollo, QueryRef } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Employee } from './employee';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -19,7 +19,20 @@ import { FormBuilder, FormGroup, NgForm, FormControl, Validators } from '@angula
 
 import { NativeDateAdapter, DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
 import { AppDateAdapter, APP_DATE_FORMATS } from './date.adapter';
-
+const empQuery = gql`
+  query employee($Id: String) {
+    book(id: $Id) {
+      id,
+      Name,
+      Address,
+      DOB,
+      Gender,
+      City,
+      Mobile,
+      Email
+    }
+  }
+`;
 @Component({
   selector: 'app-listemployee',
   templateUrl: './listemployee.component.html',
@@ -35,7 +48,9 @@ import { AppDateAdapter, APP_DATE_FORMATS } from './date.adapter';
 })
 export class ListemployeeComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'Address', 'DOB', 'Gender', 'City', 'Mobile', 'Email', 'actions'];
+  //dataSource: Employee[] = [];
   dataSource: Employee[] = [];
+  realdata: any = [];
   //dataSource = new MatTableDataSource([]);
   resp: any = [];
   isLoadingResults = true;
@@ -58,6 +73,7 @@ export class ListemployeeComponent implements OnInit {
   buttontitle = 'Save';
   arryobj: any = [];
   citylist: any;
+  private query: QueryRef<any>;
   data: Employee = { id: '', Name: '', Address: '', DOB: new Date(), Gender: '', City: '', Mobile: undefined, Email: '' };
 
   constructor(private changeDetectorRefs: ChangeDetectorRef, public _empservices: EmployeeService, private apollo: Apollo, public httpClient: HttpClient, public dialog: MatDialog, public datePipe: DatePipe) { }
@@ -80,7 +96,7 @@ export class ListemployeeComponent implements OnInit {
       this.isError = false;
       this.msg = "";
       this.dataSource = res.data['listemployees'];
-
+      this.realdata = res.data['listemployees'];
       this._empservices.setdata(res.data['listemployees']);
       this.refreceTable();
 
@@ -112,7 +128,7 @@ export class ListemployeeComponent implements OnInit {
     _this.changeValueMth();
     _this.isSuccess = false;
     _this.msgsuccss = "";
-    this.addeditEmpDialogRef = this.dialog.open(this.addEmployeeDialog);
+    this.addeditEmpDialogRef = this.dialog.open(this.addEmployeeDialog, { disableClose: true });
     this.addeditEmpDialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         this.isSuccess = true;
@@ -121,7 +137,7 @@ export class ListemployeeComponent implements OnInit {
       }
     });
   }
-  Edit(row) {
+  Edit(row, index) {
     let _this = this;
     _this.editid = row._id;
     _this.changeValueMth();
@@ -129,7 +145,7 @@ export class ListemployeeComponent implements OnInit {
     _this.msgsuccss = "";
     _this.data = row;
 
-    this.addeditEmpDialogRef = this.dialog.open(this.addEmployeeDialog);
+    this.addeditEmpDialogRef = this.dialog.open(this.addEmployeeDialog, { disableClose: true });
     this.addeditEmpDialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         _this.isSuccess = true;
@@ -143,7 +159,7 @@ export class ListemployeeComponent implements OnInit {
     _this.editid = row._id;
     _this.isSuccess = false;
     _this.msgsuccss = "";
-    this.addeditEmpDialogRef = this.dialog.open(this.deleteEmployeeDialog);
+    this.addeditEmpDialogRef = this.dialog.open(this.deleteEmployeeDialog, { disableClose: true });
     this.addeditEmpDialogRef.afterClosed().subscribe(result => {
       if (result === 1) {
         _this.isSuccess = true;
@@ -160,8 +176,13 @@ export class ListemployeeComponent implements OnInit {
 
   //
   onNoClick(): void {
-    this.addeditEmpDialogRef.close();
-    this.resetData();
+    let obj: any = {};
+    let _this = this;
+    _this.listemployee();
+    _this.addeditEmpDialogRef.close();
+    _this.oldDataSet();
+
+
   }
   employeeAddupdate() {
     if (this.editid) { this._empservices.updatedata(this.data, this.editid); } else { this._empservices.addData(this.data); }
@@ -188,6 +209,7 @@ export class ListemployeeComponent implements OnInit {
     }
   }
   resetData() {
+    console.log('reset data');
     this.editid = undefined;
     this.data = { id: '', Name: '', Address: '', DOB: new Date(), Gender: '', City: '', Mobile: undefined, Email: '' };
   }
@@ -200,6 +222,24 @@ export class ListemployeeComponent implements OnInit {
   confirmDelete(): void {
     this._empservices.deletedata(this.editid);
     this.editid = undefined;
+  }
+  oldDataSet() {
+    let _this = this;
+    this.query = this.apollo.watchQuery({
+      query: gql`{ employee(id: "${_this.editid}") {_id,Name,Address,DOB,Gender,City,Mobile,Email} }`
+    });
+
+    this.query.valueChanges.subscribe(res => {
+      _this.data.Name = res.data['employee'].Name;
+      _this.data.Address = res.data['employee'].Address;
+      _this.data.DOB = res.data['employee'].DOB;
+      _this.data.Gender = res.data['employee'].Gender;
+      _this.data.City = res.data['employee'].City;
+      _this.data.Mobile = res.data['employee'].Mobile;
+      _this.data.Email = res.data['employee'].Email;
+      this.table.renderRows();
+      _this.resetData();
+    });
   }
 
 }
